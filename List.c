@@ -48,3 +48,66 @@ Status DestoryList(SqList *L)
 	L->length = 0;
 	return OK;
 }
+
+/**
+ * .在指定位置插入目标元素，顺序表需要将插入出往后元素移位
+ * 
+ * \param L
+ * \param i
+ * \param e
+ * \return 
+ */
+Status InsertElem(SqList *L, int i, Elemtype e)
+{
+	//插入位置不合法
+	if (i<1 || i>L->length + 1)
+	{
+		return ERROR;
+	}
+	//存储空间不足，需要再分配
+	Elemtype * newList;
+	if (L->length >= L->size)
+	{
+		newList = realloc(L->elem, sizeof(Elemtype)*L->length + INCREATE_SIZE);
+		if (!newList)
+		{
+			return ERROR;
+		}
+	}
+	L->elem = newList;
+	L->size += INCREATE_SIZE;
+	//元素后移
+	Elemtype *p = &L->elem[i-1];
+	Elemtype *q = &L->elem[L->length - 1];
+	for (; q >= p; q--)
+	{
+		*(q + 1) = *q;
+	}
+	*p = e;
+	L->length++;
+	return OK;
+}
+
+/**
+ * .删除指定位置元素，并返回呗删除的值
+ * 
+ * \param L
+ * \param i
+ * \param e
+ * \return 
+ */
+Status DeleteElem(SqList *L, int i, Elemtype *e)
+{
+	if (i<1 || i>L->length + 1)
+	{
+		return ERROR;
+	}
+	Elemtype *p = &L->elem[i - 1];
+	*e = *p;
+	for (; p < &L->elem[L->length]; p++)
+	{
+		*p = *(p + 1);
+	}
+	L->length--;
+	return OK;
+}
